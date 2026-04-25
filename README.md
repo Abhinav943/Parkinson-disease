@@ -1,45 +1,48 @@
-# Parkinson's Disease Detection: A Statistical & Mathematical Modeling Approach
+# Parkinson's Disease Detection Using Machine Learning
 
-## Overview
-This repository contains the implementation of a machine learning pipeline designed to detect Parkinson's disease from biomedical voice measurements. Moving beyond basic model implementation, this project heavily emphasizes the mathematical foundations of classification algorithms, focusing on statistical feature scaling, optimization of decision boundaries, and rigorous probability analysis for medical diagnostics.
+## Project Overview
+This project applies Machine Learning algorithms to acoustic features extracted from voice recordings to detect Parkinson's disease. [cite_start]By analyzing various vocal metrics, the models predict whether a patient is healthy or has Parkinson's disease[cite: 2, 236]. 
 
-## Mathematical Foundations & Optimization
-This project benchmarks multiple classification algorithms, evaluating their underlying mathematical trade-offs when applied to high-dimensional biological data.
+## Dataset Description
+[cite_start]The project utilizes a dataset containing 195 instances and 24 features[cite: 116, 117]. 
+* [cite_start]**Target Variable:** `status` (1 = Parkinson's, 0 = Healthy)[cite: 275].
+* [cite_start]**Key Features:** Various acoustic measurements including Average Pitch (`MDVP:Fo(Hz)`), Maximum Pitch (`MDVP:Fhi(Hz)`), Minimum Pitch (`MDVP:Flo(Hz)`), Jitter, Shimmer, Harmonics-to-Noise Ratio (`HNR`), and Pitch Period Entropy (`PPE`)[cite: 110, 111, 112, 113].
+* [cite_start]**Data Cleansing:** The non-predictive `name` column was removed prior to model training[cite: 118, 119]. 
 
-### 1. Statistical Feature Scaling
-Biomedical datasets frequently exhibit extreme variance across features (e.g., vocal fundamental frequencies vs. acoustic jitter measurements). To ensure stable convergence during algorithmic optimization, strict data standardization was applied. Features were centered and scaled to unit variance:
-$$z = \frac{x - \mu}{\sigma}$$
-This transformation ensures that features with larger magnitudes do not mathematically dominate the objective functions of distance-based models like SVMs.
+## Technologies & Libraries Used
+The following Python libraries were utilized for data manipulation, visualization, and machine learning:
+* [cite_start]`pandas` & `numpy` [cite: 3, 4]
+* [cite_start]`seaborn` & `matplotlib.pyplot` [cite: 5, 6]
+* [cite_start]`scikit-learn` (`train_test_split`, `StandardScaler`, `LogisticRegression`, `DecisionTreeClassifier`, `SVC`, `LinearRegression`, metrics) [cite: 7, 8, 9, 10, 11, 12, 516]
+* [cite_start]`imblearn` (`SMOTE`) [cite: 13]
 
-### 2. Support Vector Machines (SVM) & Hyperplane Optimization
-The primary model utilized is a Support Vector Machine. The objective is to find an optimal decision boundary (hyperplane) that maximizes the margin between healthy and Parkinson's-positive data points. 
+## Methodology
+1. [cite_start]**Exploratory Data Analysis (EDA):** * Generated a Feature Correlation Heatmap to identify relationships and multicollinearity among variables (e.g., strong correlations between Jitter and Shimmer metrics)[cite: 128, 131, 193].
+   * [cite_start]Created a scatter plot analyzing the relationship between Average Frequency and Maximum Frequency, colored by patient status[cite: 196, 197].
+2. [cite_start]**Data Preprocessing:** * Features and target labels were separated into `X` and `y` variables[cite: 227, 228].
+   * [cite_start]The data was split into an 80% training set and a 20% testing set[cite: 230].
+   * [cite_start]Applied `StandardScaler` to normalize features for distance-based algorithms[cite: 231, 232].
+3. **Model Implementation:** Four distinct algorithms were trained and evaluated:
+   * [cite_start]**Logistic Regression** [cite: 237]
+   * [cite_start]**Decision Tree Classifier** (Max Depth = 4) [cite: 333]
+   * [cite_start]**Support Vector Machine (SVM)** (RBF Kernel) [cite: 456]
+   * [cite_start]**Linear Regression** (Output thresholded at $\geq 0.5$ for binary classification) [cite: 516, 530]
 
-Mathematically, this is framed as a constrained optimization problem, where we minimize:
-$$\min_{w,b} \frac{1}{2} ||w||^2$$
-subject to the condition $y_i(w \cdot x_i + b) \ge 1$. To handle non-linearly separable biological data, the model utilizes the kernel trick, implicitly mapping the input vectors into a higher-dimensional feature space to establish a robust classification boundary using calculus and linear algebra concepts.
+## Results & Evaluation
+[cite_start]Model performance was evaluated using Accuracy, Precision, Recall, F1-scores, and Confusion Matrices[cite: 240, 241, 273]. 
 
-### 3. Decision Trees & Information Theory
-To provide an interpretable, non-linear alternative, Decision Tree classifiers were also implemented. The model constructs a directed acyclic graph by recursively splitting the dataset to minimize impurity. The splits were optimized using information-theoretic metrics such as Gini Impurity:
-$$G = 1 - \sum_{i=1}^{C} p_i^2$$
-where $p_i$ is the probability of an element belonging to a specific class at a given node.
+| Model | Accuracy | Class 1 (Parkinson's) F1-Score |
+| :--- | :--- | :--- |
+| **Decision Tree** | [cite_start]92.31% [cite: 340] | [cite_start]0.95 [cite: 353] |
+| **Logistic Regression** | [cite_start]89.74% [cite: 245] | [cite_start]0.94 [cite: 258] |
+| **SVM (RBF Kernel)** | [cite_start]89.74% [cite: 460] | [cite_start]0.94 [cite: 472] |
+| **Linear Regression** | [cite_start]87.18% [cite: 545] | [cite_start]0.92 [cite: 557] |
 
-## Dataset
-The model was trained on a dataset of biomedical voice measurements from individuals with and without Parkinson's disease. Key features include:
-* **MDVP:Fo (Hz):** Average vocal fundamental frequency.
-* **MDVP:Jitter (%) & MDVP:Shimmer:** Measures of variation in fundamental frequency and amplitude.
-* **PPE (Pitch Period Entropy):** A nonlinear measure of fundamental frequency variation.
+* [cite_start]**Feature Importance:** The Decision Tree identified `PPE` (Pitch Period Entropy) as the most critical root node feature for splitting the data[cite: 404, 453]. [cite_start]Logistic Regression identified `PPE`, `D2`, and `spread1` as heavily weighted coefficients[cite: 312, 313, 314]. 
+* [cite_start]**Note on False Negatives:** The Decision Tree effectively minimized False Negatives (0 cases missed), which is a critical metric in medical diagnostics[cite: 382].
 
-## Evaluation & Precision-Recall Trade-offs
-In medical diagnostics, the cost of a False Negative (failing to detect the disease) is significantly higher than a False Positive. Therefore, the evaluation phase heavily weighed **Recall (Sensitivity)** alongside overall accuracy.
-
-### Key Results:
-* **SVM Accuracy:** 81%
-* **Decision Tree Accuracy:** 92%
-* **Optimized Recall Score:** 94%
-
-By analyzing the confusion matrix and adjusting the decision thresholds via probability analysis, the model's precision-recall trade-off was tuned to minimize type II errors, ensuring high reliability for preliminary medical screening.
-
-## Setup & Execution
-1. Clone the repository: `git clone https://github.com/Abhinav943/Minor-Project-Parkinson-disease-.git`
-2. Install required dependencies. 
-3. Execute the Jupyter Notebook to view the mathematical transformations and model training process: `jupyter notebook Parkinson_Disease_Detection.ipynb`
+## How to Run
+1. Ensure Python and JupyterLab/Jupyter Notebook are installed.
+2. Install the required dependencies: `pip install pandas numpy matplotlib seaborn scikit-learn imbalanced-learn`
+3. [cite_start]Place `parkinsons.csv` in the same root directory as the notebook[cite: 14].
+4. Run all cells in `Parkinson_disease_using_ML.ipynb` to reproduce the standard scaling, model training, and visualizations.
