@@ -117,4 +117,4 @@ jupyter notebook
 If you found this useful, consider giving it a star ⭐
 
 ## 📄 License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/Abhinav943/Parkinson-disease/blob/main/LICENSE) file for details.
