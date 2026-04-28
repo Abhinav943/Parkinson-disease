@@ -12,109 +12,143 @@
 
 ---
 
-## 📌 Overview
-This project applies machine learning techniques to detect Parkinson’s disease using voice-based biomarkers. By analyzing acoustic features such as frequency variations, jitter, shimmer, and nonlinear dynamics, the models classify individuals as healthy or affected.
+## 📋 Table of Contents
+
+- [Overview](#overview)
+- [Dataset](#dataset)
+- [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Methodology](#methodology)
+- [Models & Results](#models--results)
+- [Key Findings](#key-findings)
+- [Technologies Used](#technologies-used)
 
 ---
 
-## 📂 Dataset
-- **File:** `parkinsons.csv`  
-- **Samples:** 195  
-- **Features:** 24  
-- **Target Variable:** `status` (0 = healthy, 1 = Parkinson’s)
+## Overview
 
-### 🔧 Preprocessing
-- Removed non-informative `name` column  
-- Applied feature scaling using `StandardScaler`  
-- Split dataset into 80% training and 20% testing  
+Parkinson's Disease (PD) is a progressive neurological disorder affecting movement. Early detection is critical for improving patient outcomes. This project leverages voice measurement data to build and compare multiple ML classifiers for automated PD detection, achieving up to **96.6% accuracy** on the test set.
 
 ---
 
-## ⚙️ Tech Stack
-- **Language:** Python  
-- **Environment:** Jupyter Notebook  
+## Dataset
 
-### 📚 Libraries
-- pandas  
-- numpy  
-- matplotlib  
-- seaborn  
-- scikit-learn  
-- imbalanced-learn  
+| Property | Details |
+|---|---|
+| **Source** | UCI Machine Learning Repository |
+| **Name** | Parkinsons Disease Dataset |
+| **Instances** | 195 |
+| **Features** | 23 (22 input + 1 target) |
+| **Target** | `status` — `1` = Parkinson's, `0` = Healthy |
+| **Class Distribution** | 147 Parkinson's, 48 Healthy (imbalanced) |
 
----
-
-## 📊 Exploratory Data Analysis
-- Correlation heatmap for feature relationships  
-- Scatter plots for class separability  
-- Feature distribution analysis  
+The dataset contains biomedical voice measurements including fundamental frequency, jitter, shimmer, noise-to-harmonic ratios, and nonlinear dynamic features.
 
 ---
 
-## 🤖 Models Implemented
+## Project Structure
 
-| Model                | Accuracy | Key Insight |
-|---------------------|----------|------------|
-| Decision Tree        | **92.31%** | Best performer; PPE most important feature |
-| Logistic Regression  | 89.74%   | High precision; weaker on minority class |
-| SVM (RBF Kernel)     | 89.74%   | Comparable to Logistic Regression |
-| Linear Regression    | 87.18%   | Adapted using classification threshold |
-
----
-
-## 📈 Key Insights
-- Pitch Period Entropy (PPE) is the most influential feature  
-- Tree-based models performed best  
-- Class imbalance affects minority class prediction  
-- Nonlinear patterns are important in diagnosis  
-
----
-
-## 📉 Visualizations
-- Correlation Heatmap  
-- Scatter Plots  
-- Confusion Matrices  
-- Decision Tree Visualization  
-- Feature Importance Charts  
-- Model Comparison Graph  
-
----
-
-## 🚀 How to Run
-
-```bash
-# Clone repository
-git clone https://github.com/Abhinav943/Parkinson-disease
-
-# Navigate into project
-cd parkinsons-ml
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start Jupyter Notebook
-jupyter notebook
+```
+├── Parkinson_Disease_Detection.ipynb   # Main notebook
+├── data.csv                            # Downloaded dataset
+├── dt_clf.pkl                          # Saved Decision Tree model
+├── rf_clf.pkl                          # Saved Random Forest model
+├── lg_clf.pkl                          # Saved Logistic Regression model
+├── svm_clf.pkl                         # Saved SVM model
+├── nb_clf.pkl                          # Saved Naive Bayes model
+├── knn_clf.pkl                         # Saved KNN model
+└── xgb_clf.pkl                         # Saved XGBoost model
 ```
 
 ---
 
-## 📌 Future Improvements
-- Handle imbalance using SMOTE  
-- Hyperparameter tuning (GridSearchCV)  
-- Try ensemble models (Random Forest, XGBoost)  
-- Deploy with Streamlit or Flask  
+## Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/your-username/parkinsons-detection.git
+cd parkinsons-detection
+
+# Install dependencies
+pip install pandas numpy scikit-learn imbalanced-learn xgboost seaborn matplotlib joblib
+```
 
 ---
 
-## 🎯 Applications
-- Early detection of Parkinson’s disease  
-- Healthcare ML model interpretability  
-- Voice-based diagnostic tools  
+## Methodology
+
+### 1. Data Preprocessing
+- Dropped the non-informative `name` column
+- Verified no missing values or duplicate rows
+- Cast `status` column to `uint8` to save memory
+
+### 2. Exploratory Data Analysis
+- **Count plot** — revealed class imbalance (147 vs 48 samples)
+- **Correlation heatmap** — showed high multicollinearity among jitter and shimmer features
+- **Box plots** — patients with lower HNR, MDVP:Fo(Hz), MDVP:Fhi(Hz), and MDVP:Flo(Hz) tend to have Parkinson's
+- **Pair plots** — confirmed strong correlation within jitter and shimmer feature groups
+
+### 3. Class Balancing
+Applied **SMOTE** (Synthetic Minority Over-sampling Technique) to balance classes:
+- Before: 195 samples (147 PD, 48 healthy)
+- After: 294 samples (147 each)
+
+### 4. Feature Scaling
+Applied **MinMaxScaler** with range `(-1, 1)` to normalize all features.
+
+### 5. Train/Test Split
+80/20 split → 235 training samples, 59 test samples.
+
+### 6. Hyperparameter Tuning
+All models optimized using **GridSearchCV** with 5-fold cross-validation (3-fold for XGBoost).
 
 ---
 
-## ⭐ Support
-If you found this useful, consider giving it a star ⭐
+## Models & Results
+
+| Metric | Decision Tree | Random Forest | Logistic Regression | SVM | Naive Bayes | KNN | XGBoost |
+|---|---|---|---|---|---|---|---|
+| **Accuracy** | 0.932 | **0.966** | 0.831 | **0.966** | 0.763 | **0.966** | 0.915 |
+| **F1-Score** | 0.920 | **0.962** | 0.783 | 0.960 | 0.650 | 0.960 | 0.909 |
+| **Recall** | 0.885 | **0.962** | 0.692 | 0.923 | 0.500 | 0.923 | **0.962** |
+| **Precision** | 0.958 | **0.962** | 0.900 | **1.000** | 0.929 | **1.000** | 0.862 |
+| **R2-Score** | 0.725 | **0.862** | 0.312 | **0.862** | 0.037 | **0.862** | 0.656 |
+
+### Best Hyperparameters
+
+| Model | Best Parameters |
+|---|---|
+| Decision Tree | `criterion=entropy`, `max_depth=6`, `random_state=120` |
+| Random Forest | `criterion=entropy`, `max_depth=7`, `n_estimators=125`, `random_state=200` |
+| SVM | `C=100`, `gamma=1`, `kernel=rbf` |
+| XGBoost | `eta=0.1`, `max_depth=7`, `reg_lambda=1`, `random_state=300` |
+
+---
+
+## Key Findings
+
+- **Random Forest, SVM, and KNN** tied for the best overall accuracy at **96.6%**
+- **SVM and KNN** achieved perfect precision of **1.0** (zero false positives)
+- **Naive Bayes** performed the worst (76.3% accuracy), struggling with the highly correlated feature space
+- **XGBoost** achieved perfect scores on the training set but showed signs of overfitting on test data
+- Lower values of `HNR`, `MDVP:Fo(Hz)`, `MDVP:Fhi(Hz)`, and `MDVP:Flo(Hz)` are strong indicators of Parkinson's Disease
+- Jitter and shimmer feature groups are heavily inter-correlated, suggesting dimensionality reduction (e.g., PCA) could be explored
+
+---
+
+## Technologies Used
+
+- **Data:** `pandas`, `numpy`
+- **Visualization:** `matplotlib`, `seaborn`
+- **ML Models:** `scikit-learn`, `xgboost`
+- **Class Balancing:** `imbalanced-learn` (SMOTE)
+- **Model Persistence:** `joblib`
+
+---
+
+## ⚠️ Disclaimer
+
+This project is for academic and research purposes only. It is not intended for clinical diagnosis or medical decision-making. Always consult a qualified medical professional for health-related decisions.
 
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](https://github.com/Abhinav943/Parkinson-disease/blob/main/LICENSE) file for details.
