@@ -16,7 +16,6 @@
 
 - [Overview](#overview)
 - [Dataset](#dataset)
-- [Project Structure](#project-structure)
 - [Installation](#installation)
 - [Methodology](#methodology)
 - [Models & Results](#models--results)
@@ -43,22 +42,6 @@ Parkinson's Disease (PD) is a progressive neurological disorder affecting moveme
 | **Class Distribution** | 147 Parkinson's, 48 Healthy (imbalanced) |
 
 The dataset contains biomedical voice measurements including fundamental frequency, jitter, shimmer, noise-to-harmonic ratios, and nonlinear dynamic features.
-
----
-
-## Project Structure
-
-```
-├── Parkinson_Disease_Detection.ipynb   # Main notebook
-├── data.csv                            # Downloaded dataset
-├── dt_clf.pkl                          # Saved Decision Tree model
-├── rf_clf.pkl                          # Saved Random Forest model
-├── lg_clf.pkl                          # Saved Logistic Regression model
-├── svm_clf.pkl                         # Saved SVM model
-├── nb_clf.pkl                          # Saved Naive Bayes model
-├── knn_clf.pkl                         # Saved KNN model
-└── xgb_clf.pkl                         # Saved XGBoost model
-```
 
 ---
 
